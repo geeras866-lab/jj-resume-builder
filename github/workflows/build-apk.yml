@@ -7,27 +7,45 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Install PWA to APK Builder tool
-        run: npm install -g @bubblewrap/cli
+      - name: Install Cordova Globally
+        run: npm install -g cordova
 
-      - name: Verify Web App Manifest & Assets
+      - name: Create Cordova Project & Add Icon
         run: |
-          echo "Checking JJ Resume Builder app structure..."
-          if [ -f "index.html" ]; then
-            echo "index.html found successfully!"
-          else
-            echo "Error: index.html missing!" && exit 1
+          cordova create myApp com.jj.resumebuilder JJResumeBuilder
+          cd myApp
+          cp ../index.html www/index.html
+          
+          # If icon.svg exists, copy to resources
+          if [ -f "../icon.svg" ]; then
+            mkdir -p res/icon/android
+            cp ../icon.svg res/icon/android/icon.svg
           fi
+          
+          cordova platform add android
 
-      - name: Build Artifact Status
-        run: echo "JJ Resume Builder is ready for mobile packaging!"
+      - name: Build Debug APK
+        run: |
+          cd myApp
+          cordova build android --debug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug-apk
+          path: myApp/platforms/android/app/build/outputs/apk/debug/app-debug.apk
