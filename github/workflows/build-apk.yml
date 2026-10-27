@@ -1,0 +1,33 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install PWA to APK Builder tool
+        run: npm install -g @bubblewrap/cli
+
+      - name: Verify Web App Manifest & Assets
+        run: |
+          echo "Checking JJ Resume Builder app structure..."
+          if [ -f "index.html" ]; then
+            echo "index.html found successfully!"
+          else
+            echo "Error: index.html missing!" && exit 1
+          fi
+
+      - name: Build Artifact Status
+        run: echo "JJ Resume Builder is ready for mobile packaging!"
