@@ -9,7 +9,6 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        /* A4 Page Setup for Print / PDF Export */
         @page {
             size: A4 portrait;
             margin: 10mm;
@@ -60,7 +59,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <button onclick="clearData()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg transition">Clear Form</button>
-                <button onclick="window.print()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-lg shadow-blue-600/30 transition flex items-center gap-1.5">
+                <button onclick="triggerPrint()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-lg shadow-blue-600/30 transition flex items-center gap-1.5">
                     🖨️ Print / Save PDF
                 </button>
             </div>
@@ -73,7 +72,6 @@
         <!-- Left Sidebar: Controls & Form -->
         <div class="lg:col-span-5 space-y-4 no-print bg-slate-800/60 backdrop-blur-xl p-5 rounded-2xl border border-slate-700/80 shadow-xl max-h-[85vh] overflow-y-auto">
             
-            <!-- Template Theme Selector -->
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">1. Select Resume Layout</label>
                 <div class="grid grid-cols-2 gap-2">
@@ -105,7 +103,6 @@
                     <input type="text" id="in-name" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Type your full name">
                 </div>
 
-                <!-- Father's / Husband's Option Switcher -->
                 <div class="grid grid-cols-12 gap-2 items-end">
                     <div class="col-span-4">
                         <span class="text-slate-400 font-medium">Relation Type</span>
@@ -153,7 +150,6 @@
                     <textarea id="in-objective" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="To secure a challenging position..."></textarea>
                 </div>
 
-                <!-- Academic Qualifications Dynamic Section -->
                 <div class="border border-slate-700 p-3 rounded-xl bg-slate-900/50 space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="font-bold text-slate-200">Academic Qualifications</span>
@@ -202,7 +198,6 @@
         let currentTemplate = 'standard';
 
         window.onload = function() {
-            // Hide splash screen after 1.5 seconds
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 if(splash) {
@@ -216,6 +211,13 @@
             renderEduInputs();
             updatePreview();
         };
+
+        function triggerPrint() {
+            window.scrollTo(0, 0);
+            setTimeout(() => {
+                window.print();
+            }, 300);
+        }
 
         function setTemplate(tpl) {
             currentTemplate = tpl;
