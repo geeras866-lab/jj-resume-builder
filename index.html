@@ -9,7 +9,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Pure CSS Robust Styling for 100% Offline Support */
         header { background: rgba(30, 41, 59, 0.9); border-bottom: 1px solid rgba(51, 65, 85, 0.8); position: sticky; top: 0; z-index: 50; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
         .logo-box { width: 40px; height: 40px; background: linear-gradient(135deg, #2563eb, #6366f1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 18px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
         .btn-primary { background: #2563eb; color: white; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 8px; border: none; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3); }
@@ -26,7 +25,9 @@
         label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #60a5fa; display: block; margin-bottom: 8px; }
         .text-label { font-size: 12px; color: #94a3b8; font-weight: 500; display: block; margin-top: 10px; }
 
-        /* A4 Page Setup for Print / PDF Export */
+        .help-box { background: rgba(59, 130, 246, 0.1); border: 1px dashed #3b82f6; padding: 12px; border-radius: 10px; margin-bottom: 16px; font-size: 11px; color: #cbd5e1; line-height: 1.5; }
+        .help-box strong { color: #60a5fa; }
+
         @page { size: A4 portrait; margin: 10mm; }
         .print-container { width: 210mm; min-height: 297mm; background: white; color: #0f172a; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border-radius: 8px; font-size: 12px; line-height: 1.5; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
 
@@ -39,7 +40,6 @@
 </head>
 <body>
 
-    <!-- Splash Screen with JJ Logo -->
     <div id="splash-screen" style="position:fixed; inset:0; background:#0f172a; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition: opacity 0.7s ease;">
         <div style="width:80px; height:80px; background:linear-gradient(135deg, #2563eb, #6366f1); border-radius:20px; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:32px; box-shadow: 0 25px 50px -12px rgba(37,99,235,0.5);">
             JJ
@@ -48,7 +48,6 @@
         <p style="color:#94a3b8; font-size:12px; margin-top:4px;">Professional Offline Creator</p>
     </div>
 
-    <!-- App Header -->
     <header>
         <div style="display:flex; align-items:center; gap:12px;">
             <div class="logo-box">JJ</div>
@@ -58,28 +57,21 @@
             </div>
         </div>
         <div style="display:flex; gap:8px;">
-            <button onclick="clearData()" class="btn-secondary">Clear Form</button>
-            <button onclick="downloadPDF()" class="btn-primary">🖨️ Save as PDF</button>
+            <button onclick="clearData()" class="btn-secondary">Clear</button>
+            <button onclick="exportPDF()" class="btn-primary">📥 Export & Save PDF</button>
         </div>
     </header>
 
-    <!-- Main Workspace -->
     <main>
-        <!-- Left Sidebar: Controls & Form -->
         <div class="sidebar">
-            <label>1. Select Resume Layout</label>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
-                <div onclick="setTemplate('standard')" id="t-standard" style="cursor:pointer; border:2px solid #3b82f6; background:rgba(59,130,246,0.1); padding:10px; border-radius:10px;">
-                    <p style="font-weight:600; font-size:12px; color:white;">Standard Table</p>
-                    <p style="font-size:10px; color:#94a3b8;">Classic Indian format</p>
-                </div>
-                <div onclick="setTemplate('modern')" id="t-modern" style="cursor:pointer; border:2px solid #334155; padding:10px; border-radius:10px;">
-                    <p style="font-weight:600; font-size:12px; color:white;">Modern Sidebar</p>
-                    <p style="font-size:10px; color:#94a3b8;">Professional grid</p>
-                </div>
+            <div class="help-box">
+                <strong>ℹ️ How to Use (About):</strong><br>
+                1. Mee details kinda form lo enter cheyandi.<br>
+                2. Right side lo A4 resume automatic ga update avtundi.<br>
+                3. Top lo unna <strong>"Export & Save PDF"</strong> button click chesi direct ga PDF format lo save/share chesukovachu!
             </div>
 
-            <label>2. Personal Information</label>
+            <label>Personal Information</label>
             <div>
                 <span class="text-label">Full Name</span>
                 <input type="text" id="in-name" oninput="updatePreview()" class="form-input" placeholder="Type your full name">
@@ -135,7 +127,6 @@
                 <textarea id="in-objective" rows="2" oninput="updatePreview()" class="form-input" placeholder="To secure a challenging position..."></textarea>
             </div>
 
-            <!-- Academic Qualifications -->
             <div style="margin-top:12px; border:1px solid #334155; padding:12px; border-radius:10px; background:rgba(15,23,42,0.5);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                     <span style="font-weight:bold; font-size:12px; color:white;">Academic Qualifications</span>
@@ -144,10 +135,6 @@
                 <div id="eduContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
             </div>
 
-            <div style="margin-top:8px;">
-                <span class="text-label">Strengths (Press Enter for new line)</span>
-                <textarea id="in-strengths" rows="2" oninput="updatePreview()" class="form-input" placeholder="Hardworking&#10;Good communication"></textarea>
-            </div>
             <div style="margin-top:8px;">
                 <span class="text-label">Technical Skills</span>
                 <textarea id="in-tech" rows="2" oninput="updatePreview()" class="form-input" placeholder="MS Office&#10;Computer Browsing"></textarea>
@@ -172,15 +159,12 @@
             </div>
         </div>
 
-        <!-- Right: Live A4 Preview -->
         <div class="preview-area" style="display:flex; justify-content:center;">
             <div id="resumePreview" class="print-container"></div>
         </div>
     </main>
 
     <script>
-        let currentTemplate = 'standard';
-
         window.onload = function() {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -196,19 +180,11 @@
             updatePreview();
         };
 
-        // Universal 100% Offline Print & Save as PDF function
-        function downloadPDF() {
+        function exportPDF() {
             window.scrollTo(0, 0);
             setTimeout(() => {
                 window.print();
             }, 300);
-        }
-
-        function setTemplate(tpl) {
-            currentTemplate = tpl;
-            document.getElementById('t-standard').style.borderColor = tpl === 'standard' ? '#3b82f6' : '#334155';
-            document.getElementById('t-modern').style.borderColor = tpl === 'modern' ? '#3b82f6' : '#334155';
-            updatePreview();
         }
 
         let eduList = [
@@ -267,7 +243,6 @@
                 dob: document.getElementById('in-dob').value,
                 address: document.getElementById('in-address').value,
                 objective: document.getElementById('in-objective').value,
-                strengths: document.getElementById('in-strengths').value,
                 tech: document.getElementById('in-tech').value,
                 exp: document.getElementById('in-exp').value,
                 nationality: document.getElementById('in-nationality').value,
@@ -282,7 +257,7 @@
             let formattedDate = d.customDate ? d.customDate.split('-').reverse().join('-') : '';
             let eduRows = '';
             
-            eduList.forEach(edu => {
+            eduList.executeForEach = eduList.forEach(edu => {
                 if(edu.inst || edu.marks || edu.year || edu.course) {
                     eduRows += `<tr style="border-bottom:1px solid #cbd5e1;"><td style="padding:6px; border-right:1px solid #cbd5e1;">${edu.course}</td><td style="padding:6px; border-right:1px solid #cbd5e1;">${edu.inst}</td><td style="padding:6px; border-right:1px solid #cbd5e1; text-align:center;">${edu.marks}</td><td style="padding:6px; text-align:center;">${edu.year}</td></tr>`;
                 }
