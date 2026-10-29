@@ -1,421 +1,439 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JJ Resume Builder App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        /* A4 Page Setup for Print / PDF Export */
-        @page {
-            size: A4 portrait;
-            margin: 10mm;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JJ Resume Builder App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* A4 Page Setup for Print / PDF Export */
+        @page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
 
-        @media print {
-            body { 
-                background: white !important; 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact;
-            }
-            .no-print { display: none !important; }
-            .print-container { 
-                box-shadow: none !important; 
-                border: none !important; 
-                width: 210mm !important; 
-                min-height: 297mm !important; 
-                max-height: 297mm !important;
-                padding: 10mm !important; 
-                margin: 0 !important;
-                overflow: hidden !important;
-            }
-        }
-    </style>
+        @media print {
+            body { 
+                background: white !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+            }
+            .no-print { display: none !important; }
+            .print-container { 
+                box-shadow: none !important; 
+                border: none !important; 
+                width: 210mm !important; 
+                min-height: 297mm !important; 
+                max-height: 297mm !important;
+                padding: 10mm !important; 
+                margin: 0 !important;
+                overflow: hidden !important;
+            }
+        }
+    </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
 
-    <!-- App Header -->
-    <header class="bg-slate-800/80 backdrop-blur-md border-b border-slate-700/80 sticky top-0 z-50 no-print">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 text-white font-extrabold text-lg tracking-wider">
-                    JJ
-                </div>
-                <div>
-                    <h1 class="font-bold text-base text-white tracking-wide">JJ Resume Builder</h1>
-                    <p class="text-[11px] text-slate-400">Professional Offline Resume Creator</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <button onclick="clearData()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg transition">Clear Form</button>
-                <button onclick="window.print()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-lg shadow-blue-600/30 transition flex items-center gap-1.5">
-                    🖨️ Print / Save PDF
-                </button>
-            </div>
-        </div>
-    </header>
+    <!-- Splash Screen with JJ Logo -->
+    <div id="splash-screen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/50 text-white font-extrabold text-3xl tracking-wider animate-bounce">
+            JJ
+        </div>
+        <h1 class="text-white font-bold text-lg mt-4 tracking-wide">JJ Resume Builder</h1>
+        <p class="text-slate-400 text-xs mt-1">Professional Offline Creator</p>
+    </div>
 
-    <!-- Main Workspace -->
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- Left Sidebar: Controls & Form -->
-        <div class="lg:col-span-5 space-y-4 no-print bg-slate-800/60 backdrop-blur-xl p-5 rounded-2xl border border-slate-700/80 shadow-xl max-h-[85vh] overflow-y-auto">
-            
-            <!-- Template Theme Selector -->
-            <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">1. Select Resume Layout</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <div onclick="setTemplate('standard')" id="t-standard" class="cursor-pointer border-2 p-3 rounded-xl border-blue-500 bg-blue-500/10 transition">
-                        <p class="font-semibold text-xs text-white">Standard Table</p>
-                        <p class="text-[10px] text-slate-400">Classic Indian format</p>
-                    </div>
-                    <div onclick="setTemplate('modern')" id="t-modern" class="cursor-pointer border-2 p-3 rounded-xl border-slate-700 hover:border-slate-600 transition">
-                        <p class="font-semibold text-xs text-white">Modern Sidebar</p>
-                        <p class="text-[10px] text-slate-400">Professional grid</p>
-                    </div>
-                    <div onclick="setTemplate('minimal')" id="t-minimal" class="cursor-pointer border-2 p-3 rounded-xl border-slate-700 hover:border-slate-600 transition">
-                        <p class="font-semibold text-xs text-white">Minimalist</p>
-                        <p class="text-[10px] text-slate-400">Clean typography</p>
-                    </div>
-                    <div onclick="setTemplate('executive')" id="t-executive" class="cursor-pointer border-2 p-3 rounded-xl border-slate-700 hover:border-slate-600 transition">
-                        <p class="font-semibold text-xs text-white">Executive</p>
-                        <p class="text-[10px] text-slate-400">Bold formal look</p>
-                    </div>
-                </div>
-            </div>
+    <!-- App Header -->
+    <header class="bg-slate-800/80 backdrop-blur-md border-b border-slate-700/80 sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 text-white font-extrabold text-lg tracking-wider">
+                    JJ
+                </div>
+                <div>
+                    <h1 class="font-bold text-base text-white tracking-wide">JJ Resume Builder</h1>
+                    <p class="text-[11px] text-slate-400">Professional Offline Resume Creator</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="clearData()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg transition">Clear Form</button>
+                <button onclick="window.print()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg shadow-lg shadow-blue-600/30 transition flex items-center gap-1.5">
+                    🖨️ Print / Save PDF
+                </button>
+            </div>
+        </div>
+    </header>
 
-            <hr class="border-slate-700/80 my-3">
+    <!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Sidebar: Controls & Form -->
+        <div class="lg:col-span-5 space-y-4 no-print bg-slate-800/60 backdrop-blur-xl p-5 rounded-2xl border border-slate-700/80 shadow-xl max-h-[85vh] overflow-y-auto">
+            
+            <!-- Template Theme Selector -->
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">1. Select Resume Layout</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <div onclick="setTemplate('standard')" id="t-standard" class="cursor-pointer border-2 p-3 rounded-xl border-blue-500 bg-blue-500/10 transition">
+                        <p class="font-semibold text-xs text-white">Standard Table</p>
+                        <p class="text-[10px] text-slate-400">Classic Indian format</p>
+                    </div>
+                    <div onclick="setTemplate('modern')" id="t-modern" class="cursor-pointer border-2 p-3 rounded-xl border-slate-700 hover:border-slate-600 transition">
+                        <p class="font-semibold text-xs text-white">Modern Sidebar</p>
+                        <p class="text-[10px] text-slate-400">Professional grid</p>
+                    </div>
+                    <div onclick="setTemplate('minimal')" id="t-minimal" class="cursor-pointer border-2 p-3 rounded-xl border-slate-700 hover:border-slate-600 transition">
+                        <p class="font-semibold text-xs text-white">Minimalist</p>
+                        <p class="text-[10px] text-slate-400">Clean typography</p>
+                    </div>
+                    <div onclick="setTemplate('executive')" id="t-executive" class="cursor-pointer border-2 p-3 rounded-xl border-slate-700 hover:border-slate-600 transition">
+                        <p class="font-semibold text-xs text-white">Executive</p>
+                        <p class="text-[10px] text-slate-400">Bold formal look</p>
+                    </div>
+                </div>
+            </div>
 
-            <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">2. Personal Information</label>
-            <div class="space-y-3 text-xs">
-                <div>
-                    <span class="text-slate-400 font-medium">Full Name</span>
-                    <input type="text" id="in-name" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Type your full name">
-                </div>
+            <hr class="border-slate-700/80 my-3">
 
-                <!-- Father's / Husband's Option Switcher -->
-                <div class="grid grid-cols-12 gap-2 items-end">
-                    <div class="col-span-4">
-                        <span class="text-slate-400 font-medium">Relation Type</span>
-                        <select id="in-relation-type" onchange="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500">
-                            <option value="Father's Name">Father's Name</option>
-                            <option value="Husband's Name">Husband's Name</option>
-                        </select>
-                    </div>
-                    <div class="col-span-8">
-                        <span class="text-slate-400 font-medium">Guardian Name (Optional)</span>
-                        <input type="text" id="in-guardian" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Type name here">
-                    </div>
-                </div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-blue-400 mb-2">2. Personal Information</label>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <span class="text-slate-400 font-medium">Full Name</span>
+                    <input type="text" id="in-name" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Type your full name">
+                </div>
 
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <span class="text-slate-400 font-medium">Email</span>
-                        <input type="email" id="in-email" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="email@gmail.com">
-                    </div>
-                    <div>
-                        <span class="text-slate-400 font-medium">Mobile No</span>
-                        <input type="text" id="in-phone" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="9876543210">
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <span class="text-slate-400 font-medium">Gender</span>
-                        <input type="text" id="in-gender" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Female">
-                    </div>
-                    <div>
-                        <span class="text-slate-400 font-medium">Marital Status</span>
-                        <input type="text" id="in-marital" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Married">
-                    </div>
-                    <div>
-                        <span class="text-slate-400 font-medium">DOB</span>
-                        <input type="text" id="in-dob" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="DD-MM-YYYY">
-                    </div>
-                </div>
-                <div>
-                    <span class="text-slate-400 font-medium">Address</span>
-                    <textarea id="in-address" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Door No, Street, City, State - Pincode"></textarea>
-                </div>
-                <div>
-                    <span class="text-slate-400 font-medium">Career Objective</span>
-                    <textarea id="in-objective" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="To secure a challenging position..."></textarea>
-                </div>
+                <!-- Father's / Husband's Option Switcher -->
+                <div class="grid grid-cols-12 gap-2 items-end">
+                    <div class="col-span-4">
+                        <span class="text-slate-400 font-medium">Relation Type</span>
+                        <select id="in-relation-type" onchange="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="Father's Name">Father's Name</option>
+                            <option value="Husband's Name">Husband's Name</option>
+                        </select>
+                    </div>
+                    <div class="col-span-8">
+                        <span class="text-slate-400 font-medium">Guardian Name (Optional)</span>
+                        <input type="text" id="in-guardian" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Type name here">
+                    </div>
+                </div>
 
-                <!-- Academic Qualifications Dynamic Section -->
-                <div class="border border-slate-700 p-3 rounded-xl bg-slate-900/50 space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-slate-200">Academic Qualifications</span>
-                        <button onclick="addEduRow()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[11px] font-semibold transition">+ Add Course</button>
-                    </div>
-                    <div id="eduContainer" class="space-y-2"></div>
-                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-slate-400 font-medium">Email</span>
+                        <input type="email" id="in-email" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="email@gmail.com">
+                    </div>
+                    <div>
+                        <span class="text-slate-400 font-medium">Mobile No</span>
+                        <input type="text" id="in-phone" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="9876543210">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <span class="text-slate-400 font-medium">Gender</span>
+                        <input type="text" id="in-gender" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Female">
+                    </div>
+                    <div>
+                        <span class="text-slate-400 font-medium">Marital Status</span>
+                        <input type="text" id="in-marital" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Married">
+                    </div>
+                    <div>
+                        <span class="text-slate-400 font-medium">DOB</span>
+                        <input type="text" id="in-dob" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="DD-MM-YYYY">
+                    </div>
+                </div>
+                <div>
+                    <span class="text-slate-400 font-medium">Address</span>
+                    <textarea id="in-address" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Door No, Street, City, State - Pincode"></textarea>
+                </div>
+                <div>
+                    <span class="text-slate-400 font-medium">Career Objective</span>
+                    <textarea id="in-objective" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="To secure a challenging position..."></textarea>
+                </div>
 
-                <div>
-                    <span class="text-slate-400 font-medium">Strengths (Press Enter for new line)</span>
-                    <textarea id="in-strengths" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Hardworking&#10;Good communication skills"></textarea>
-                </div>
-                <div>
-                    <span class="text-slate-400 font-medium">Technical Skills (Press Enter for new line)</span>
-                    <textarea id="in-tech" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="MS Office&#10;Computer Browsing"></textarea>
-                </div>
-                <div>
-                    <span class="text-slate-400 font-medium">Experience / Work History</span>
-                    <textarea id="in-exp" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Worked at Company Name - 1 year"></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <span class="text-slate-400 font-medium">Nationality</span>
-                        <input type="text" id="in-nationality" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Indian">
-                    </div>
-                    <div>
-                        <span class="text-slate-400 font-medium">Languages Known</span>
-                        <input type="text" id="in-lang" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Telugu, English">
-                    </div>
-                </div>
-                <div>
-                    <span class="text-slate-400 font-medium">Resume Date</span>
-                    <input type="date" id="in-date" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500">
-                </div>
-            </div>
-        </div>
+                <!-- Academic Qualifications Dynamic Section -->
+                <div class="border border-slate-700 p-3 rounded-xl bg-slate-900/50 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-200">Academic Qualifications</span>
+                        <button onclick="addEduRow()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[11px] font-semibold transition">+ Add Course</button>
+                    </div>
+                    <div id="eduContainer" class="space-y-2"></div>
+                </div>
 
-        <!-- Right: Live A4 Preview -->
-        <div class="lg:col-span-7 flex justify-center items-start">
-            <div id="resumePreview" class="print-container w-[210mm] h-[297mm] bg-white text-slate-900 p-10 shadow-2xl rounded-lg border border-slate-200 text-xs leading-relaxed overflow-hidden box-border flex flex-col justify-between"></div>
-        </div>
+                <div>
+                    <span class="text-slate-400 font-medium">Strengths (Press Enter for new line)</span>
+                    <textarea id="in-strengths" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Hardworking&#10;Good communication skills"></textarea>
+                </div>
+                <div>
+                    <span class="text-slate-400 font-medium">Technical Skills (Press Enter for new line)</span>
+                    <textarea id="in-tech" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="MS Office&#10;Computer Browsing"></textarea>
+                </div>
+                <div>
+                    <span class="text-slate-400 font-medium">Experience / Work History</span>
+                    <textarea id="in-exp" rows="2" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Worked at Company Name - 1 year"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-slate-400 font-medium">Nationality</span>
+                        <input type="text" id="in-nationality" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Indian">
+                    </div>
+                    <div>
+                        <span class="text-slate-400 font-medium">Languages Known</span>
+                        <input type="text" id="in-lang" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500" placeholder="Telugu, English">
+                    </div>
+                </div>
+                <div>
+                    <span class="text-slate-400 font-medium">Resume Date</span>
+                    <input type="date" id="in-date" oninput="updatePreview()" class="w-full mt-1 p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+        </div>
 
-    </main>
+        <!-- Right: Live A4 Preview -->
+        <div class="lg:col-span-7 flex justify-center items-start">
+            <div id="resumePreview" class="print-container w-[210mm] h-[297mm] bg-white text-slate-900 p-10 shadow-2xl rounded-lg border border-slate-200 text-xs leading-relaxed overflow-hidden box-border flex flex-col justify-between"></div>
+        </div>
 
-    <script>
-        let currentTemplate = 'standard';
+    </main>
 
-        window.onload = function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('in-date').value = today;
-            renderEduInputs();
-            updatePreview();
-        };
+    <script>
+        let currentTemplate = 'standard';
 
-        function setTemplate(tpl) {
-            currentTemplate = tpl;
-            ['standard', 'modern', 'minimal', 'executive'].forEach(t => {
-                const el = document.getElementById(`t-${t}`);
-                if(t === tpl) {
-                    el.className = "cursor-pointer border-2 p-3 rounded-xl border-blue-500 bg-blue-500/10 transition";
-                } else {
-                    el.className = "cursor-pointer border-2 p-3 rounded-xl border-slate-700 hover:border-slate-600 transition";
-                }
-            });
-            updatePreview();
-        }
+        window.onload = function() {
+            // Hide splash screen after 1.5 seconds
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if(splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.remove(), 700);
+                }
+            }, 1500);
 
-        let eduList = [
-            { course: "Graduation / Degree", inst: "", marks: "", year: "" },
-            { course: "Intermediate / Diploma", inst: "", marks: "", year: "" },
-            { course: "10th / SSC", inst: "", marks: "", year: "" }
-        ];
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('in-date').value = today;
+            renderEduInputs();
+            updatePreview();
+        };
 
-        function renderEduInputs() {
-            const container = document.getElementById('eduContainer');
-            container.innerHTML = '';
-            eduList.forEach((edu, index) => {
-                const div = document.createElement('div');
-                div.className = "bg-slate-900 p-2.5 border border-slate-700 rounded-xl space-y-1 relative";
-                div.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <input type="text" value="${edu.course}" oninput="updateEduField(${index}, 'course', this.value)" class="text-[11px] font-semibold text-blue-400 bg-transparent border-b border-slate-700 w-3/4 focus:outline-none" placeholder="Course Name">
-                        ${eduList.length > 1 ? `<button onclick="removeEduRow(${index})" class="text-red-400 font-bold text-xs hover:text-red-300">✕</button>` : ''}
-                    </div>
-                    <input type="text" value="${edu.inst}" oninput="updateEduField(${index}, 'inst', this.value)" class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded-lg text-white" placeholder="Institution / College Name">
-                    <div class="grid grid-cols-2 gap-1">
-                        <input type="text" value="${edu.marks}" oninput="updateEduField(${index}, 'marks', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded-lg text-white" placeholder="Percentage (e.g. 70%)">
-                        <input type="text" value="${edu.year}" oninput="updateEduField(${index}, 'year', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded-lg text-white" placeholder="Year (e.g. 2018)">
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
+        function setTemplate(tpl) {
+            currentTemplate = tpl;
+            ['standard', 'modern', 'minimal', 'executive'].forEach(t => {
+                const el = document.getElementById(`t-${t}`);
+                if(t === tpl) {
+                    el.className = "cursor-pointer border-2 p-3 rounded-xl border-blue-500 bg-blue-500/10 transition";
+                } else {
+                    el.className = "cursor-pointer border-2 p-3 rounded-xl border-slate-700 hover:border-slate-600 transition";
+                }
+            });
+            updatePreview();
+        }
 
-        function addEduRow() {
-            eduList.push({ course: "Post Graduation / Other", inst: "", marks: "", year: "" });
-            renderEduInputs();
-            updatePreview();
-        }
+        let eduList = [
+            { course: "Graduation / Degree", inst: "", marks: "", year: "" },
+            { course: "Intermediate / Diploma", inst: "", marks: "", year: "" },
+            { course: "10th / SSC", inst: "", marks: "", year: "" }
+        ];
 
-        function removeEduRow(index) {
-            eduList.splice(index, 1);
-            renderEduInputs();
-            updatePreview();
-        }
+        function renderEduInputs() {
+            const container = document.getElementById('eduContainer');
+            container.innerHTML = '';
+            eduList.forEach((edu, index) => {
+                const div = document.createElement('div');
+                div.className = "bg-slate-900 p-2.5 border border-slate-700 rounded-xl space-y-1 relative";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <input type="text" value="${edu.course}" oninput="updateEduField(${index}, 'course', this.value)" class="text-[11px] font-semibold text-blue-400 bg-transparent border-b border-slate-700 w-3/4 focus:outline-none" placeholder="Course Name">
+                        ${eduList.length > 1 ? `<button onclick="removeEduRow(${index})" class="text-red-400 font-bold text-xs hover:text-red-300">✕</button>` : ''}
+                    </div>
+                    <input type="text" value="${edu.inst}" oninput="updateEduField(${index}, 'inst', this.value)" class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded-lg text-white" placeholder="Institution / College Name">
+                    <div class="grid grid-cols-2 gap-1">
+                        <input type="text" value="${edu.marks}" oninput="updateEduField(${index}, 'marks', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded-lg text-white" placeholder="Percentage (e.g. 70%)">
+                        <input type="text" value="${edu.year}" oninput="updateEduField(${index}, 'year', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded-lg text-white" placeholder="Year (e.g. 2018)">
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
 
-        function updateEduField(index, field, value) {
-            eduList[index][field] = value;
-            updatePreview();
-        }
+        function addEduRow() {
+            eduList.push({ course: "Post Graduation / Other", inst: "", marks: "", year: "" });
+            renderEduInputs();
+            updatePreview();
+        }
 
-        function getData() {
-            return {
-                name: document.getElementById('in-name').value,
-                relationType: document.getElementById('in-relation-type').value,
-                guardian: document.getElementById('in-guardian').value,
-                email: document.getElementById('in-email').value,
-                phone: document.getElementById('in-phone').value,
-                gender: document.getElementById('in-gender').value,
-                marital: document.getElementById('in-marital').value,
-                dob: document.getElementById('in-dob').value,
-                address: document.getElementById('in-address').value,
-                objective: document.getElementById('in-objective').value,
-                strengths: document.getElementById('in-strengths').value,
-                tech: document.getElementById('in-tech').value,
-                exp: document.getElementById('in-exp').value,
-                nationality: document.getElementById('in-nationality').value,
-                lang: document.getElementById('in-lang').value,
-                customDate: document.getElementById('in-date').value
-            };
-        }
+        function removeEduRow(index) {
+            eduList.splice(index, 1);
+            renderEduInputs();
+            updatePreview();
+        }
 
-        function updatePreview() {
-            const d = getData();
-            const container = document.getElementById('resumePreview');
-            let html = '';
+        function updateEduField(index, field, value) {
+            eduList[index][field] = value;
+            updatePreview();
+        }
 
-            let formattedDate = d.customDate ? d.customDate.split('-').reverse().join('-') : '';
+        function getData() {
+            return {
+                name: document.getElementById('in-name').value,
+                relationType: document.getElementById('in-relation-type').value,
+                guardian: document.getElementById('in-guardian').value,
+                email: document.getElementById('in-email').value,
+                phone: document.getElementById('in-phone').value,
+                gender: document.getElementById('in-gender').value,
+                marital: document.getElementById('in-marital').value,
+                dob: document.getElementById('in-dob').value,
+                address: document.getElementById('in-address').value,
+                objective: document.getElementById('in-objective').value,
+                strengths: document.getElementById('in-strengths').value,
+                tech: document.getElementById('in-tech').value,
+                exp: document.getElementById('in-exp').value,
+                nationality: document.getElementById('in-nationality').value,
+                lang: document.getElementById('in-lang').value,
+                customDate: document.getElementById('in-date').value
+            };
+        }
 
-            if (currentTemplate === 'standard') {
-                let eduRows = '';
-                eduList.forEach(edu => {
-                    if(edu.inst || edu.marks || edu.year || edu.course) {
-                        eduRows += `<tr class="border-b border-slate-300"><td class="p-1.5 border-r border-slate-300 font-medium">${edu.course}</td><td class="p-1.5 border-r border-slate-300">${edu.inst}</td><td class="p-1.5 border-r border-slate-300 text-center">${edu.marks}</td><td class="p-1.5 text-center">${edu.year}</td></tr>`;
-                    }
-                });
-                if(!eduRows) eduRows = `<tr><td colspan="4" class="p-2 text-center text-slate-400">Academic details will appear here...</td></tr>`;
+        function updatePreview() {
+            const d = getData();
+            const container = document.getElementById('resumePreview');
+            let html = '';
 
-                let strengthList = '';
-                if(d.strengths) {
-                    d.strengths.split('\n').forEach(s => { if(s.trim()) strengthList += `<li>${s.trim()}</li>`; });
-                }
+            let formattedDate = d.customDate ? d.customDate.split('-').reverse().join('-') : '';
 
-                let techList = '';
-                if(d.tech) {
-                    d.tech.split('\n').forEach(t => { if(t.trim()) techList += `<li>${t.trim()}</li>`; });
-                }
+            if (currentTemplate === 'standard') {
+                let eduRows = '';
+                eduList.forEach(edu => {
+                    if(edu.inst || edu.marks || edu.year || edu.course) {
+                        eduRows += `<tr class="border-b border-slate-300"><td class="p-1.5 border-r border-slate-300 font-medium">${edu.course}</td><td class="p-1.5 border-r border-slate-300">${edu.inst}</td><td class="p-1.5 border-r border-slate-300 text-center">${edu.marks}</td><td class="p-1.5 text-center">${edu.year}</td></tr>`;
+                    }
+                });
+                if(!eduRows) eduRows = `<tr><td colspan="4" class="p-2 text-center text-slate-400">Academic details will appear here...</td></tr>`;
 
-                html = `
-                    <div>
-                        <div class="text-center font-bold text-base uppercase tracking-wider mb-4">Resume</div>
-                        <div class="flex justify-between border-b pb-3 mb-3">
-                            <div class="max-w-[55%]">
-                                <p class="font-bold text-sm uppercase">${d.name || ''}</p>
-                                ${d.guardian ? `<p class="text-slate-700 mt-0.5 text-[11px]"><strong>${d.relationType}:</strong> ${d.guardian}</p>` : ''}
-                                <p class="text-slate-700 mt-1 whitespace-pre-line">${d.address || ''}</p>
-                            </div>
-                            <div class="text-right space-y-0.5 text-slate-700">
-                                ${d.phone ? `<p><strong>Mobile No:</strong> ${d.phone}</p>` : ''}
-                                ${d.email ? `<p><strong>Email:</strong> ${d.email}</p>` : ''}
-                                ${d.dob ? `<p><strong>Date of Birth:</strong> ${d.dob}</p>` : ''}
-                                ${d.gender ? `<p><strong>Gender:</strong> ${d.gender}</p>` : ''}
-                                ${d.marital ? `<p><strong>Marital Status:</strong> ${d.marital}</p>` : ''}
-                            </div>
-                        </div>
-                        ${d.objective ? `<div class="mb-3"><h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-1 text-slate-900">Career Objective:</h2><p class="text-slate-800 leading-relaxed">${d.objective}</p></div>` : ''}
-                        <div class="mb-3">
-                            <h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-2 text-slate-900">Academic Qualifications:</h2>
-                            <table class="w-full border-collapse border border-slate-300 text-left">
-                                <thead>
-                                    <tr class="bg-slate-100 border-b border-slate-300">
-                                        <th class="p-1.5 border-r border-slate-300 font-semibold">Qualification</th>
-                                        <th class="p-1.5 border-r border-slate-300 font-semibold">Institution / University</th>
-                                        <th class="p-1.5 border-r border-slate-300 font-semibold text-center">Percentage of Marks</th>
-                                        <th class="p-1.5 font-semibold text-center">Year of Passed</th>
-                                    </tr>
-                                </thead>
-                                <tbody>${eduRows}</tbody>
-                            </table>
-                        </div>
-                        ${strengthList ? `<div class="mb-3"><h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-1 text-slate-900">Strengths:</h2><ul class="list-disc pl-5 space-y-0.5 text-slate-800">${strengthList}</ul></div>` : ''}
-                        ${techList ? `<div class="mb-3"><h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-1 text-slate-900">Technical Skills:</h2><ul class="list-disc pl-5 space-y-0.5 text-slate-800">${techList}</ul></div>` : ''}
-                        ${d.exp ? `<div class="mb-3"><h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-1 text-slate-900">Experience:</h2><p class="text-slate-800 whitespace-pre-line">${d.exp}</p></div>` : ''}
-                        ${(d.nationality || d.lang) ? `<div class="mb-3 border border-slate-300 p-2 bg-slate-50 flex justify-between items-center"><div><strong>Nationality:</strong> ${d.nationality || ''}</div><div><strong>Languages Known:</strong> ${d.lang || ''}</div></div>` : ''}
-                    </div>
-                    <div class="mt-4 text-slate-800">
-                        <p class="italic mb-4"><strong>Declaration:</strong> I hereby declare that the information given above is true and correct to the best of my knowledge.</p>
-                        <div class="flex justify-between items-end">
-                            <div><strong>Date:</strong> <span>${formattedDate}</span></div>
-                            <div class="text-right font-bold uppercase">${d.name || ''}</div>
-                        </div>
-                    </div>
-                `;
-            } else if (currentTemplate === 'modern') {
-                let eduText = eduList.map(e => `${e.course}: ${e.inst} (${e.marks}, ${e.year})`).filter(e => e.trim()).join('\n• ');
-                html = `
-                    <div class="grid grid-cols-12 gap-6 h-full">
-                        <div class="col-span-4 border-r border-slate-200 pr-4 space-y-4">
-                            <div>
-                                <h2 class="text-lg font-bold text-slate-900 leading-tight">${d.name || ''}</h2>
-                                ${d.guardian ? `<p class="text-[11px] text-slate-600">${d.relationType}: ${d.guardian}</p>` : ''}
-                                <p class="text-xs font-semibold text-blue-600 mt-1">Professional</p>
-                            </div>
-                            <div class="text-[11px] text-slate-600 space-y-1">
-                                ${d.email ? `<p><strong>Email:</strong> ${d.email}</p>` : ''}
-                                ${d.phone ? `<p><strong>Phone:</strong> ${d.phone}</p>` : ''}
-                                ${d.dob ? `<p><strong>DOB:</strong> ${d.dob}</p>` : ''}
-                                ${d.address ? `<p><strong>Location:</strong> ${d.address}</p>` : ''}
-                            </div>
-                            ${d.tech ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-2">Skills</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.tech}</div></div>` : ''}
-                            ${d.lang ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-2">Languages</h3><p class="text-xs text-slate-700">${d.lang}</p></div>` : ''}
-                        </div>
-                        <div class="col-span-8 space-y-4">
-                            ${d.objective ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-1">Objective</h3><p class="text-xs text-slate-700 leading-relaxed">${d.objective}</p></div>` : ''}
-                            ${eduText ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-1">Education</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">• ${eduText}</div></div>` : ''}
-                            ${d.exp ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-1">Experience</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.exp}</div></div>` : ''}
-                            ${d.strengths ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-1">Strengths</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.strengths}</div></div>` : ''}
-                        </div>
-                    </div>
-                `;
-            } else if (currentTemplate === 'minimal') {
-                let eduText = eduList.map(e => `${e.course}: ${e.inst} (${e.marks}, ${e.year})`).filter(e => e.trim()).join(' | ');
-                html = `
-                    <div class="space-y-6">
-                        <div>
-                            <h2 class="text-2xl font-light text-slate-900 tracking-tight">${d.name || ''}</h2>
-                            <p class="text-[11px] text-slate-500 tracking-widest uppercase mt-1">${[d.email, d.phone, d.address].filter(Boolean).join(' • ')}</p>
-                        </div>
-                        ${d.objective ? `<div class="space-y-1"><h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Objective</h3><p class="text-xs text-slate-700 leading-relaxed">${d.objective}</p></div>` : ''}
-                        ${eduText ? `<div class="space-y-1"><h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Education</h3><div class="text-xs text-slate-700">${eduText}</div></div>` : ''}
-                        ${d.exp ? `<div class="space-y-1"><h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Experience</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.exp}</div></div>` : ''}
-                        ${d.tech ? `<div class="space-y-1"><h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Skills</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.tech}</div></div>` : ''}
-                    </div>
-                `;
-            } else if (currentTemplate === 'executive') {
-                let eduText = eduList.map(e => `${e.course}: ${e.inst} (${e.marks}, ${e.year})`).filter(e => e.trim()).join(' | ');
-                html = `
-                    <div class="border-t-4 border-b-4 border-slate-900 py-3 text-center mb-6">
-                        <h2 class="text-xl font-extrabold uppercase tracking-widest text-slate-900">${d.name || ''}</h2>
-                        <p class="text-xs text-slate-600 mt-1">${[d.email, d.phone, d.address].filter(Boolean).join(' | ')}</p>
-                    </div>
-                    <div class="space-y-4">
-                        ${d.objective ? `<div><h3 class="text-xs font-black uppercase bg-slate-100 p-1 mb-2 text-slate-800">Profile</h3><p class="text-xs text-slate-700 leading-relaxed">${d.objective}</p></div>` : ''}
-                        ${eduText ? `<div><h3 class="text-xs font-black uppercase bg-slate-100 p-1 mb-2 text-slate-800">Education</h3><div class="text-xs text-slate-700">${eduText}</div></div>` : ''}
-                        ${d.exp ? `<div><h3 class="text-xs font-black uppercase bg-slate-100 p-1 mb-2 text-slate-800">Experience</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.exp}</div></div>` : ''}
-                        ${d.tech ? `<div><h3 class="text-xs font-black uppercase bg-slate-100 p-1 mb-2 text-slate-800">Core Skills</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.tech}</div></div>` : ''}
-                    </div>
-                `;
-            }
+                let strengthList = '';
+                if(d.strengths) {
+                    d.strengths.split('\n').forEach(s => { if(s.trim()) strengthList += `<li>${s.trim()}</li>`; });
+                }
 
-            container.innerHTML = html;
-        }
+                let techList = '';
+                if(d.tech) {
+                    d.tech.split('\n').forEach(t => { if(t.trim()) techList += `<li>${t.trim()}</li>`; });
+                }
 
-        function clearData() {
-            document.querySelectorAll('input, textarea').forEach(el => el.value = '');
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('in-date').value = today;
-            eduList = [];
-            renderEduInputs();
-            updatePreview();
-        }
-    </script>
+                html = `
+                    <div>
+                        <div class="text-center font-bold text-base uppercase tracking-wider mb-4">Resume</div>
+                        <div class="flex justify-between border-b pb-3 mb-3">
+                            <div class="max-w-[55%]">
+                                <p class="font-bold text-sm uppercase">${d.name || ''}</p>
+                                ${d.guardian ? `<p class="text-slate-700 mt-0.5 text-[11px]"><strong>${d.relationType}:</strong> ${d.guardian}</p>` : ''}
+                                <p class="text-slate-700 mt-1 whitespace-pre-line">${d.address || ''}</p>
+                            </div>
+                            <div class="text-right space-y-0.5 text-slate-700">
+                                ${d.phone ? `<p><strong>Mobile No:</strong> ${d.phone}</p>` : ''}
+                                ${d.email ? `<p><strong>Email:</strong> ${d.email}</p>` : ''}
+                                ${d.dob ? `<p><strong>Date of Birth:</strong> ${d.dob}</p>` : ''}
+                                ${d.gender ? `<p><strong>Gender:</strong> ${d.gender}</p>` : ''}
+                                ${d.marital ? `<p><strong>Marital Status:</strong> ${d.marital}</p>` : ''}
+                            </div>
+                        </div>
+                        ${d.objective ? `<div class="mb-3"><h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-1 text-slate-900">Career Objective:</h2><p class="text-slate-800 leading-relaxed">${d.objective}</p></div>` : ''}
+                        <div class="mb-3">
+                            <h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-2 text-slate-900">Academic Qualifications:</h2>
+                            <table class="w-full border-collapse border border-slate-300 text-left">
+                                <thead>
+                                    <tr class="bg-slate-100 border-b border-slate-300">
+                                        <th class="p-1.5 border-r border-slate-300 font-semibold">Qualification</th>
+                                        <th class="p-1.5 border-r border-slate-300 font-semibold">Institution / University</th>
+                                        <th class="p-1.5 border-r border-slate-300 font-semibold text-center">Percentage of Marks</th>
+                                        <th class="p-1.5 font-semibold text-center">Year of Passed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${eduRows}</tbody>
+                            </table>
+                        </div>
+                        ${strengthList ? `<div class="mb-3"><h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-1 text-slate-900">Strengths:</h2><ul class="list-disc pl-5 space-y-0.5 text-slate-800">${strengthList}</ul></div>` : ''}
+                        ${techList ? `<div class="mb-3"><h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-1 text-slate-900">Technical Skills:</h2><ul class="list-disc pl-5 space-y-0.5 text-slate-800">${techList}</ul></div>` : ''}
+                        ${d.exp ? `<div class="mb-3"><h2 class="font-bold uppercase tracking-wide border-b border-slate-300 pb-0.5 mb-1 text-slate-900">Experience:</h2><p class="text-slate-800 whitespace-pre-line">${d.exp}</p></div>` : ''}
+                        ${(d.nationality || d.lang) ? `<div class="mb-3 border border-slate-300 p-2 bg-slate-50 flex justify-between items-center"><div><strong>Nationality:</strong> ${d.nationality || ''}</div><div><strong>Languages Known:</strong> ${d.lang || ''}</div></div>` : ''}
+                    </div>
+                    <div class="mt-4 text-slate-800">
+                        <p class="italic mb-4"><strong>Declaration:</strong> I hereby declare that the information given above is true and correct to the best of my knowledge.</p>
+                        <div class="flex justify-between items-end">
+                            <div><strong>Date:</strong> <span>${formattedDate}</span></div>
+                            <div class="text-right font-bold uppercase">${d.name || ''}</div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentTemplate === 'modern') {
+                let eduText = eduList.map(e => `${e.course}: ${e.inst} (${e.marks}, ${e.year})`).filter(e => e.trim()).join('\n• ');
+                html = `
+                    <div class="grid grid-cols-12 gap-6 h-full">
+                        <div class="col-span-4 border-r border-slate-200 pr-4 space-y-4">
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-900 leading-tight">${d.name || ''}</h2>
+                                ${d.guardian ? `<p class="text-[11px] text-slate-600">${d.relationType}: ${d.guardian}</p>` : ''}
+                                <p class="text-xs font-semibold text-blue-600 mt-1">Professional</p>
+                            </div>
+                            <div class="text-[11px] text-slate-600 space-y-1">
+                                ${d.email ? `<p><strong>Email:</strong> ${d.email}</p>` : ''}
+                                ${d.phone ? `<p><strong>Phone:</strong> ${d.phone}</p>` : ''}
+                                ${d.dob ? `<p><strong>DOB:</strong> ${d.dob}</p>` : ''}
+                                ${d.address ? `<p><strong>Location:</strong> ${d.address}</p>` : ''}
+                            </div>
+                            ${d.tech ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-2">Skills</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.tech}</div></div>` : ''}
+                            ${d.lang ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-2">Languages</h3><p class="text-xs text-slate-700">${d.lang}</p></div>` : ''}
+                        </div>
+                        <div class="col-span-8 space-y-4">
+                            ${d.objective ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-1">Objective</h3><p class="text-xs text-slate-700 leading-relaxed">${d.objective}</p></div>` : ''}
+                            ${eduText ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-1">Education</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">• ${eduText}</div></div>` : ''}
+                            ${d.exp ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-1">Experience</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.exp}</div></div>` : ''}
+                            ${d.strengths ? `<div><h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-1 mb-1">Strengths</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.strengths}</div></div>` : ''}
+                        </div>
+                    </div>
+                `;
+            } else if (currentTemplate === 'minimal') {
+                let eduText = eduList.map(e => `${e.course}: ${e.inst} (${e.marks}, ${e.year})`).filter(e => e.trim()).join(' | ');
+                html = `
+                    <div class="space-y-6">
+                        <div>
+                            <h2 class="text-2xl font-light text-slate-900 tracking-tight">${d.name || ''}</h2>
+                            <p class="text-[11px] text-slate-500 tracking-widest uppercase mt-1">${[d.email, d.phone, d.address].filter(Boolean).join(' • ')}</p>
+                        </div>
+                        ${d.objective ? `<div class="space-y-1"><h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Objective</h3><p class="text-xs text-slate-700 leading-relaxed">${d.objective}</p></div>` : ''}
+                        ${eduText ? `<div class="space-y-1"><h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Education</h3><div class="text-xs text-slate-700">${eduText}</div></div>` : ''}
+                        ${d.exp ? `<div class="space-y-1"><h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Experience</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.exp}</div></div>` : ''}
+                        ${d.tech ? `<div class="space-y-1"><h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Skills</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.tech}</div></div>` : ''}
+                    </div>
+                `;
+            } else if (currentTemplate === 'executive') {
+                let eduText = eduList.map(e => `${e.course}: ${e.inst} (${e.marks}, ${e.year})`).filter(e => e.trim()).join(' | ');
+                html = `
+                    <div class="border-t-4 border-b-4 border-slate-900 py-3 text-center mb-6">
+                        <h2 class="text-xl font-extrabold uppercase tracking-widest text-slate-900">${d.name || ''}</h2>
+                        <p class="text-xs text-slate-600 mt-1">${[d.email, d.phone, d.address].filter(Boolean).join(' | ')}</p>
+                    </div>
+                    <div class="space-y-4">
+                        ${d.objective ? `<div><h3 class="text-xs font-black uppercase bg-slate-100 p-1 mb-2 text-slate-800">Profile</h3><p class="text-xs text-slate-700 leading-relaxed">${d.objective}</p></div>` : ''}
+                        ${eduText ? `<div><h3 class="text-xs font-black uppercase bg-slate-100 p-1 mb-2 text-slate-800">Education</h3><div class="text-xs text-slate-700">${eduText}</div></div>` : ''}
+                        ${d.exp ? `<div><h3 class="text-xs font-black uppercase bg-slate-100 p-1 mb-2 text-slate-800">Experience</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.exp}</div></div>` : ''}
+                        ${d.tech ? `<div><h3 class="text-xs font-black uppercase bg-slate-100 p-1 mb-2 text-slate-800">Core Skills</h3><div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed">${d.tech}</div></div>` : ''}
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function clearData() {
+            document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('in-date').value = today;
+            eduList = [];
+            renderEduInputs();
+            updatePreview();
+        }
+    </script>
 </body>
 </html>
