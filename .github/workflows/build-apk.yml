@@ -19,6 +19,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Compatible Gradle 7.5
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '7.5'
+
       - name: Install Android SDK & Build Tools
         uses: android-actions/setup-android@v3
         with:
