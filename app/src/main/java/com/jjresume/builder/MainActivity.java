@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebChromeClient;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -15,30 +14,25 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
+        // Create WebView dynamically to avoid white flash background
         webView = new WebView(this);
+        webView.setBackgroundColor(0xFF0F172A); // Matches slate-900 theme color
         setContentView(webView);
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
-        webSettings.setDatabaseEnabled(true);
         webSettings.setAllowFileAccess(true);
         webSettings.setAllowContentAccess(true);
-        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        
+        // Enable smooth scaling and rendering
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
 
-        // Force links and redirects to stay within WebView offline
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
-        });
+        webView.setWebViewClient(new WebViewClient());
 
-        webView.setWebChromeClient(new WebChromeClient());
-
-        // Load index.html directly from local assets bundled inside the APK
+        // Load local offline HTML file from assets
         webView.loadUrl("file:///android_asset/index.html");
     }
 
