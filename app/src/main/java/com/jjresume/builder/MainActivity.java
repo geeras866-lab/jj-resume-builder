@@ -26,7 +26,6 @@ public class MainActivity extends Activity {
         webSettings.setAllowFileAccess(true);
         webSettings.setAllowContentAccess(true);
         
-        // Enable smooth scaling and rendering
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
 
