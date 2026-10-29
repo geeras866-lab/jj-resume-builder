@@ -19,8 +19,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Android SDK & Build Tools via Command Line
+      - name: Install Android SDK & Build Tools
         uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: true
+          packages: 'platforms;android-33 build-tools;33.0.2'
 
       - name: Build Debug APK using Gradle
         run: gradle assembleDebug
